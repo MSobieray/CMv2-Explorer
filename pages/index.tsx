@@ -3,6 +3,8 @@ import styles from "../styles/Home.module.css";
 import { JsonMetadata, Metaplex, Nft } from "@metaplex-foundation/js-next";
 import { clusterApiUrl, Connection, PublicKey } from "@solana/web3.js";
 import { FC, useState } from "react";
+import { ToastContainer, toast } from "react-toastify"
+import 'react-toastify/dist/ReactToastify.css';
 
 const connection = new Connection(clusterApiUrl("devnet"));
 const mx = Metaplex.make(connection);
@@ -14,9 +16,22 @@ export default function Home() {
   const [nfts, setNfts] = useState<JsonMetadata[] | null>(null);
 
   const fetchNft = async () => {
-    const nfts = await mx.nfts().findAllByCandyMachine(new PublicKey(publicKey))
-    const nftsMetaData = await Promise.all(nfts.map(nft => nft.metadataTask.run()))
-    setNfts(nftsMetaData)
+    try {
+      const nfts = await mx.nfts().findAllByCandyMachine(new PublicKey(publicKey))
+      const nftsMetaData = await Promise.all(nfts.map(nft => nft.metadataTask.run()))
+      setNfts(nftsMetaData)
+    } catch(error) {
+      
+      toast('Please Use a Valid Candy Machine Public Key', {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: true,
+        closeOnClick: true,
+        progress: undefined,
+        type: 'error'
+      })
+    }
+    
     
   };
 
@@ -53,6 +68,7 @@ export default function Home() {
           {nfts && nfts.map(nft => renderNft(nft))}
         </div>
       </div>
+      <ToastContainer />
     </div>
   );
 }
