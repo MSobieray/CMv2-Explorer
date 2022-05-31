@@ -1,74 +1,39 @@
 import Head from "next/head";
-import styles from "../styles/Home.module.css";
-import { JsonMetadata, Metaplex, Nft } from "@metaplex-foundation/js-next";
-import { clusterApiUrl, Connection, PublicKey } from "@solana/web3.js";
-import { FC, useState } from "react";
-import { ToastContainer, toast } from "react-toastify"
-import 'react-toastify/dist/ReactToastify.css';
+import { useState } from "react";
 
-const connection = new Connection(clusterApiUrl("devnet"));
-const mx = Metaplex.make(connection);
+import DisplayNft from "../components/DisplayNft";
+import useMetaPlex from "../hooks/useMetaplex";
+
+import styles from "../styles/Home.module.css";
 
 export default function Home() {
   const [publicKey, setPublicKey] = useState(
     "6SpvDrqEZekJ6HaMWbeqNixCyXUztu6q6fhMisGjucu4"
-  );
-  const [nfts, setNfts] = useState<JsonMetadata[] | null>(null);
-
-  const fetchNft = async () => {
-    try {
-      const nfts = await mx.nfts().findAllByCandyMachine(new PublicKey(publicKey))
-      const nftsMetaData = await Promise.all(nfts.map(nft => nft.metadataTask.run()))
-      setNfts(nftsMetaData)
-    } catch(error) {
-      
-      toast('Please Use a Valid Candy Machine Public Key', {
-        position: "top-right",
-        autoClose: 5000,
-        hideProgressBar: true,
-        closeOnClick: true,
-        progress: undefined,
-        type: 'error'
-      })
-    }
-    
-    
-  };
-
-  const renderNft: FC = (nft: JsonMetadata) => {
-    return (
-      <div className={styles.nftPreview} key={nft.name}>
-        <h1>{nft.name}</h1>
-        <img
-          src={nft.image}
-          alt={nft.description}
-        />
-      </div>
-    )
-  } 
+  );   
+  const [fetchNfts, loading, mintedNFTs] = useMetaPlex()
 
   return (
     <div>
       <Head>
-        <title>Metaplex and Next.js example</title>
+        <title>Candy Machine</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
       <div className={styles.App}>
         <div className={styles.container}>
-          <h1 className={styles.title}>NFT Mint Address</h1>
-          <div className={styles.nftForm}>
-            <input
-              type="text"
-              value={publicKey}
-              onChange={(event) => setPublicKey(event.target.value)}
-            />
-            <button onClick={fetchNft}>Fetch</button>
+          <h1 className="text-xl text-left">Candy Machine Public Key</h1>
+          {loading ? <p>loading</p> : <div className={styles.nftForm}>
+              <input
+                type="text"
+                value={publicKey}
+                onChange={(event) => setPublicKey(event.target.value)}
+              />
+              <button onClick={() => fetchNfts(publicKey)}>Fetch</button>  
           </div>
-          {nfts && nfts.map(nft => renderNft(nft))}
+          }
+          {mintedNFTs && mintedNFTs.map(nft => DisplayNft(nft))}
         </div>
       </div>
-      <ToastContainer />
     </div>
   );
 }
