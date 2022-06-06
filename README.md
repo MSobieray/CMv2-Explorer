@@ -2,33 +2,23 @@ This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next
 
 ## Getting Started
 
-First, run the development server:
+First, install dependencies and run the development server:
 
 ```bash
-npm run dev
+npm i && npm run dev
 # or
-yarn dev
+yarn install && yarn dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `pages/index.tsx`. The page auto-updates as you edit the file.
+## Details
+An application using client side rendering to display minted NFTs belonging to a [MetaPlex Candy Machine](https://docs.metaplex.com/candy-machine-v2/introduction) without the need to connect a wallet. This is using Solana's Devnet and comes with my candy machine's address pre-populated. It is also built with the [anchor framework](https://github.com/project-serum/anchor) to help with deserializing the JSON-RPC 2.0 responses and working with IDLs and Programs needed to fetch the candy machine's account data.
 
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.ts`.
+The UI shows the information about the candy machine and displays any of the NFTs that have been minted by using the [MetaPlex](https://github.com/metaplex-foundation/js-next) `findAllByCandyMachine` method and running the `metadataTask` for each one. Fetching the data this way is slow and I would like to have found a faster solution which would also show the un-minted NFTs. Unfortunately, I was not able to easily find a way to query all the NFTs besides using `findAllByCandyMachine`
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
+## Side Note
+This is the first time I have interacted with Solana's blockchain or any blockchain, and I learned a lot! I was happy to dig into this and begin learning how to build DApps. I really enjoyed this and want to keep playing around with it in the future, I hope you enjoy it as much I did building it.
 
-## Learn More
 
-To learn more about Next.js, take a look at the following resources:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
